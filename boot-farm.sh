@@ -5,7 +5,7 @@
 set -uo pipefail
 TOPIC="neb-probe-941699db"
 LOCK="80884ccafc06ca24b18d4436220798de74927d64d49344873b95b9d5698472bb"
-PPF=2
+PPF="${PPF:-2}"
 OUT=/root/neb-farm
 mkdir -p "$OUT"; cd "$OUT"
 
