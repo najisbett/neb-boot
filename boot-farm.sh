@@ -13,7 +13,7 @@ say() { curl -sS -m 15 -H "Title: $1" -d "$2" "https://ntfy.sh/$TOPIC" >/dev/nul
 
 work() {
   GNU=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
-  say "farm boot" "gpus=$GNU procs_per_gpu=$PPF $(nvidia-smi --query-gpu=name --format=csv,noheader | tr '\n' ' ')"
+  say "farm boot" "run=${RUN_ID:-none} gpus=$GNU procs_per_gpu=$PPF $(nvidia-smi --query-gpu=name --format=csv,noheader | tr '\n' ' ')"
 
   python3 - <<'PY'
 import urllib.request, tarfile, zipfile, os
