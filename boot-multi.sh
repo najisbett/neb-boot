@@ -25,6 +25,13 @@ print("ok", sorted(os.listdir(".")))
 PY
   chmod +x neb-node neb-miner-gpu 2>/dev/null
 
+  ./neb-miner-gpu --selftest --dataset neb-datasets.bin > selftest.log 2>&1
+  say "neb multi selftest" "rc=$? :: $(tail -3 selftest.log | tr '\n' ' ' | cut -c1-260)"
+  if ! grep -q "SELFTEST PASSED" selftest.log; then
+    say "neb multi abort" "selftest failed, not starting miners :: $(tail -5 selftest.log | tr '\n' ' ' | cut -c1-300)"
+    return
+  fi
+
   nohup ./neb-node --run --dataset neb-datasets.bin --datadir data --miner-lock "$LOCK" > node.log 2>&1 &
   for i in $(seq 1 90); do
     sleep 10
