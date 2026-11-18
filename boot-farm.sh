@@ -48,12 +48,17 @@ PY
 
   while true; do
     sleep 60
-    TOT=0; LINE=""
+    TOT=0; SH=0; BL=0; LINE=""
     for f in miner-g*p*.log; do
-      R=$(tail -1 "$f" 2>/dev/null | grep -oE '[0-9]+ attempts/s' | grep -oE '[0-9]+')
+      L=$(tail -1 "$f" 2>/dev/null)
+      R=$(printf '%s' "$L" | grep -oE '[0-9]+ attempts/s' | grep -oE '[0-9]+')
+      S=$(printf '%s' "$L" | grep -oE 'shares [0-9]+' | grep -oE '[0-9]+')
+      B=$(printf '%s' "$L" | grep -oE 'blocks [0-9]+' | grep -oE '[0-9]+')
       [ -n "$R" ] && TOT=$((TOT+R)) && LINE="$LINE ${f#miner-}:$R"
+      [ -n "$S" ] && SH=$((SH+S))
+      [ -n "$B" ] && BL=$((BL+B))
     done
-    say "farm rate" "total=$TOT/s |$LINE"
+    say "farm rate" "total=$TOT/s shares=$SH blocks=$BL |$LINE"
   done
 }
 
