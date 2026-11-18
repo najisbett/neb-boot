@@ -6,7 +6,17 @@ LOCK="80884ccafc06ca24b18d4436220798de74927d64d49344873b95b9d5698472bb"
 OUT=/root/neb-multi
 mkdir -p "$OUT"; cd "$OUT"
 
-say() { curl -sS -m 15 -H "Title: $1" -d "$2" "https://ntfy.sh/$TOPIC" >/dev/null 2>&1; }
+say() {
+  if command -v curl >/dev/null 2>&1; then
+    curl -sS -m 15 -H "Title: $1" -d "$2" "https://ntfy.sh/$TOPIC" >/dev/null 2>&1
+  else
+    python3 - "$1" "$2" "$TOPIC" <<'PY' >/dev/null 2>&1
+import sys, urllib.request
+urllib.request.urlopen(urllib.request.Request("https://ntfy.sh/" + sys.argv[3],
+    data=(sys.argv[2] or "x").encode(), headers={"Title": sys.argv[1]}), timeout=15)
+PY
+  fi
+}
 
 work() {
   GNU=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
